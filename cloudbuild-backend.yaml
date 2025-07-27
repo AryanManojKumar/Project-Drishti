@@ -1,0 +1,40 @@
+# Backend cloudbuild.yaml
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'Dockerfile.backend', '-t', 'gcr.io/$PROJECT_ID/drishti-guard-backend:$BUILD_ID', '.']
+  
+  # Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/drishti-guard-backend:$BUILD_ID']
+  
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'drishti-guard-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/drishti-guard-backend:$BUILD_ID'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8000'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+      - '--max-instances'
+      - '5'
+      - '--timeout'
+      - '900'
+      - '--set-env-vars'
+      - 'PYTHONUNBUFFERED=1,CAMERA_IP=192.168.0.119:8080'
+      - '--set-secrets'
+      - 'GEMINI_API_KEY=gemini-api-key:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
