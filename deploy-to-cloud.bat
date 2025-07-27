@@ -26,6 +26,6 @@ if /i "%CONFIRM%" neq "y" (
 
 echo.
 echo 🚀 Starting deployment...
-powershell -ExecutionPolicy Bypass -File "deploy-gcp.ps1" -ProjectId "%PROJECT_ID%" -GeminiApiKey "%GEMINI_KEY%"
+powershell -ExecutionPolicy Bypass -File "deploy-gcp-clean.ps1" -ProjectId "%PROJECT_ID%" -GeminiApiKey "%GEMINI_KEY%"
 
 pause
