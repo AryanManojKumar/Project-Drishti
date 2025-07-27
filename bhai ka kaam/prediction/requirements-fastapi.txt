@@ -1,0 +1,46 @@
+"""
+FastAPI Requirements for Drishti Guard Backend
+Install with: pip install -r requirements-fastapi.txt
+"""
+
+# FastAPI and server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==11.0.3
+
+# CORS and middleware
+python-multipart==0.0.6
+
+# Data validation
+pydantic==2.4.2
+
+# Async support
+asyncio-mqtt==0.13.0
+
+# HTTP client for external APIs
+httpx==0.25.0
+requests==2.31.0
+
+# Database (optional - for production)
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Existing requirements from your Streamlit app
+streamlit>=1.28.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+pandas>=2.0.0
+plotly>=5.15.0
+Pillow>=10.0.0
+
+# API and ML
+google-generativeai
+google-cloud-maps
+scikit-learn
+torch
+ultralytics
+
+# Utilities
+python-dotenv==1.0.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4

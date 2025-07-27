@@ -1,0 +1,74 @@
+{
+  "latest_alert": {
+    "id": "anomaly_1753595813",
+    "timestamp": "2025-07-27T11:26:53.998161",
+    "category": "Crowd Control",
+    "severity": {
+      "level": 3,
+      "label": "HIGH",
+      "color": "#fd7e14"
+    },
+    "confidence": "85.0%",
+    "location": "center area",
+    "summary": {
+      "situation_overview": "Large crowd appears tightly packed with limited personal space. High density can lead to discomfort, potential for pushing and shoving, and increased risk of trampling in case of sudden movement or panic.",
+      "severity_assessment": "Severity 3 due to high density and limited egress points visible. This can quickly escalate into a dangerous situation if there is an incident that causes panic. While there isn't evidence of distress, the conditions are ripe for rapid escalation.",
+      "hazard_analysis": "Risk of overcrowding leading to difficulty breathing, crushing injuries, or a stampede. Limited mobility could hinder emergency response.",
+      "immediate_actions": [
+        "Monitor crowd density and movement",
+        "Deploy additional security personnel to observe crowd behavior and intervene if necessary",
+        "Prepare for potential medical emergencies",
+        "Ensure clear communication channels are open",
+        "Identify and mark clear evacuation routes",
+        "Adjust event sound level to prevent over-stimulation"
+      ],
+      "equipment_required": [
+        "Barriers",
+        "Communication devices",
+        "First aid kits",
+        "Lighting to highlight exits"
+      ],
+      "de_escalation_strategy": "Gradually disperse the crowd through staggered exits, clear communication and instructions from event staff, and managing the tempo of event performances",
+      "resolution_method": "Employ methods to ease pressure. Can include opening exitways. Pause music for clearer communication if necessary."
+    },
+    "alert_level": "warning",
+    "requires_immediate_action": true
+  },
+  "all_reports": [
+    {
+      "id": "anomaly_1753595813",
+      "timestamp": "2025-07-27T11:26:53.998161",
+      "category": "Crowd Control",
+      "severity": {
+        "level": 3,
+        "label": "HIGH",
+        "color": "#fd7e14"
+      },
+      "confidence": "85.0%",
+      "location": "center area",
+      "summary": {
+        "situation_overview": "Large crowd appears tightly packed with limited personal space. High density can lead to discomfort, potential for pushing and shoving, and increased risk of trampling in case of sudden movement or panic.",
+        "severity_assessment": "Severity 3 due to high density and limited egress points visible. This can quickly escalate into a dangerous situation if there is an incident that causes panic. While there isn't evidence of distress, the conditions are ripe for rapid escalation.",
+        "hazard_analysis": "Risk of overcrowding leading to difficulty breathing, crushing injuries, or a stampede. Limited mobility could hinder emergency response.",
+        "immediate_actions": [
+          "Monitor crowd density and movement",
+          "Deploy additional security personnel to observe crowd behavior and intervene if necessary",
+          "Prepare for potential medical emergencies",
+          "Ensure clear communication channels are open",
+          "Identify and mark clear evacuation routes",
+          "Adjust event sound level to prevent over-stimulation"
+        ],
+        "equipment_required": [
+          "Barriers",
+          "Communication devices",
+          "First aid kits",
+          "Lighting to highlight exits"
+        ],
+        "de_escalation_strategy": "Gradually disperse the crowd through staggered exits, clear communication and instructions from event staff, and managing the tempo of event performances",
+        "resolution_method": "Employ methods to ease pressure. Can include opening exitways. Pause music for clearer communication if necessary."
+      },
+      "alert_level": "warning",
+      "requires_immediate_action": true
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "analysis_timestamp": "2025-07-23T08:48:14.514471",
+  "analysis_type": "unified_complete",
+  "input_sources": [
+    "map_analysis",
+    "video_analysis",
+    "maps_crowd_data"
+  ],
+  "individual_analyses": {
+    "map_analysis": {
+      "timestamp": "2025-07-23 08:48:14",
+      "analysis_type": "complete_map_video_analysis",
+      "map_analysis": {
+        "error": "Map analysis failed",
+        "status_code": 429
+      },
+      "video_analysis": {
+        "error": "Cannot open video source"
+      },
+      "realtime_data": {
+        "places_analysis": {
+          "total_places": 0,
+          "high_rated": 0,
+          "popular_places": 0,
+          "place_types": []
+        },
+        "traffic_analysis": {
+          "traffic_level": "moderate",
+          "congestion_score": 6,
+          "peak_hours": [
+            "08:00-10:00",
+            "17:00-19:00"
+          ]
+        },
+        "location_crowd_score": 30
+      },
+      "combined_insights": {
+        "overall_crowd_level": "LOW",
+        "risk_assessment": "minimal",
+        "confidence_score": 0.33,
+        "key_findings": [
+          "Location crowd score: 30/100"
+        ],
+        "data_sources_used": [
+          "realtime_data"
+        ]
+      },
+      "recommendations": [
+        "\u2705 NORMAL - Standard monitoring sufficient",
+        "Continue regular security patrols"
+      ],
+      "alert_level": "normal"
+    },
+    "video_analysis": {
+      "crowd_level": "LOW",
+      "people_count": 0,
+      "density_score": 0.0,
+      "alert_status": "normal",
+      "timestamp": "2025-07-23 08:48:22",
+      "video_analysis": {
+        "people_count": 0,
+        "source": "gemini_vision"
+      },
+      "maps_analysis": {
+        "crowd_factor": 0.0,
+        "nearby_places": 0,
+        "busy_places": 0,
+        "source": "google_maps"
+      }
+    },
+    "maps_crowd_data": {
+      "timestamp": "2025-07-23T08:48:22.357839",
+      "location": {
+        "lat": 28.6139,
+        "lng": 77.209
+      },
+      "total_estimated_people": 0,
+      "crowd_zones": {
+        "high_density_zones": [],
+        "medium_density_zones": [],
+        "low_density_zones": []
+      },
+      "density_hotspots": [],
+      "places_data": {
+        "total_places": 0,
+        "high_crowd_places": [],
+        "medium_crowd_places": [],
+        "low_crowd_places": []
+      }
+    }
+  },
+  "unified_metrics": {
+    "total_people_estimate": 0,
+    "crowd_density_score": 0,
+    "safety_risk_score": 30,
+    "flow_efficiency_score": 70,
+    "venue_capacity_utilization": 0,
+    "alert_level": "normal",
+    "critical_factors": [],
+    "data_confidence": 0.99
+  },
+  "combined_insights": {
+    "crowd_situation_summary": "NORMAL CONDITIONS: 0 people with 0.0% density. Standard monitoring sufficient.",
+    "key_findings": [
+      "Video Analysis: 0 people counted in real-time"
+    ],
+    "risk_assessment": {
+      "overall_risk_level": "Low",
+      "risk_score": 30,
+      "primary_risk_factors": [],
+      "mitigation_priority": "Medium"
+    },
+    "capacity_analysis": {
+      "current_utilization": "0.0%",
+      "capacity_status": "Low",
+      "estimated_people": 0,
+      "capacity_recommendation": "Normal operations"
+    },
+    "flow_analysis": {
+      "flow_efficiency": "70.0%",
+      "flow_status": "Good",
+      "flow_recommendation": "Monitor flow patterns"
+    },
+    "location_hotspots": [],
+    "temporal_factors": {
+      "current_time": "08:48",
+      "time_factor": "Peak Hours",
+      "crowd_expectation": "Higher than normal"
+    }
+  },
+  "final_assessment": {
+    "overall_status": "NORMAL - Standard crowd conditions with routine monitoring",
+    "severity_level": 3,
+    "immediate_actions_required": [],
+    "short_term_recommendations": [
+      "Continue monitoring every 15 minutes",
+      "Update crowd analysis every 30 minutes",
+      "Maintain communication with security team"
+    ],
+    "long_term_suggestions": [
+      "Review venue capacity limits",
+      "Analyze crowd patterns for future events",
+      "Consider infrastructure improvements for better flow"
+    ],
+    "success_metrics": {
+      "target_density_reduction": "0.0%",
+      "target_people_reduction": 0,
+      "safety_improvement_target": "0.0 points",
+      "monitoring_frequency": "30 minutes"
+    },
+    "next_review_time": "1 hour"
+  },
+  "actionable_recommendations": [
+    "\u23f0 SHORT-TERM: Continue monitoring every 15 minutes",
+    "\u23f0 SHORT-TERM: Update crowd analysis every 30 minutes",
+    "\u23f0 SHORT-TERM: Maintain communication with security team",
+    "\ud83d\udcf1 COMMUNICATION: Maintain constant communication with security team",
+    "\ud83d\udcca MONITORING: Continue real-time crowd monitoring",
+    "\ud83d\udd04 UPDATES: Provide regular updates to management"
+  ],
+  "density_overlay_path": "density_overlay_1753240702.png",
+  "confidence_score": 1.0
+}

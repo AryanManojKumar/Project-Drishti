@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Video Anomaly Detection System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .incident-card {
+            border-left: 5px solid;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .incident-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .priority-emergency {
+            border-left-color: #6f42c1;
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+        }
+
+        .priority-critical {
+            border-left-color: #dc3545;
+        }
+
+        .priority-high {
+            border-left-color: #fd7e14;
+        }
+
+        .priority-medium {
+            border-left-color: #ffc107;
+        }
+
+        .priority-low {
+            border-left-color: #28a745;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-new {
+            background-color: #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        .status-assigned {
+            background-color: #ffc107;
+        }
+
+        .status-resolved {
+            background-color: #28a745;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .volunteer-card {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .volunteer-available {
+            border-left: 4px solid #28a745;
+        }
+
+        .volunteer-assigned {
+            border-left: 4px solid #ffc107;
+        }
+
+        .volunteer-busy {
+            border-left: 4px solid #dc3545;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .emergency-alert {
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+            color: white;
+            animation: flash 1s infinite;
+            border-radius: 10px;
+        }
+
+        @keyframes flash {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0.8;
+            }
+        }
+
+        .action-btn {
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .concern-item {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 3px solid #ffc107;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .resource-item {
+            background: rgba(13, 202, 240, 0.1);
+            border-left: 3px solid #0dcaf0;
+            padding: 5px 10px;
+            margin: 3px 0;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-shield-alt"></i> Admin Dashboard - Event Security Control
+            </span>
+            <div class="d-flex align-items-center">
+                <a href="http://localhost:5000" target="_blank" class="btn btn-primary btn-sm me-3">
+                    <i class="fas fa-video"></i> Video Analysis Interface
+                </a>
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="statusText">Connecting...</span>
+                <span class="badge bg-info ms-3" id="lastUpdate">--:--:--</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- System Status Row -->
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <h4 id="totalIncidents">0</h4>
+                        <small>Total Incidents</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-danger text-white text-center">
+                    <div class="card-body">
+                        <h4 id="activeIncidents">0</h4>
+                        <small>Active Incidents</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-success text-white text-center">
+                    <div class="card-body">
+                        <h4 id="resolvedIncidents">0</h4>
+                        <small>Resolved</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-primary text-white text-center">
+                    <div class="card-body">
+                        <h4 id="availableVolunteers">0</h4>
+                        <small>Available Staff</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-warning text-white text-center">
+                    <div class="card-body">
+                        <h4 id="assignedVolunteers">0</h4>
+                        <small>Assigned Staff</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-info text-white text-center">
+                    <div class="card-body">
+                        <h4 id="responseTime">--</h4>
+                        <small>Avg Response</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Incidents Panel -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="incidentTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="active-tab" data-bs-toggle="tab"
+                                    data-bs-target="#active" type="button" role="tab">
+                                    <i class="fas fa-exclamation-triangle"></i> Active Incidents
+                                    <span class="badge bg-danger ms-1" id="activeCount">0</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="all-tab" data-bs-toggle="tab" data-bs-target="#all"
+                                    type="button" role="tab">
+                                    <i class="fas fa-list"></i> All Incidents
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="resolved-tab" data-bs-toggle="tab"
+                                    data-bs-target="#resolved" type="button" role="tab">
+                                    <i class="fas fa-check-circle"></i> Resolved
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="tab-content" id="incidentTabContent">
+                            <!-- Active Incidents -->
+                            <div class="tab-pane fade show active" id="active" role="tabpanel">
+                                <div class="p-3">
+                                    <!-- Risk Level Filter Buttons -->
+                                    <div class="mb-3">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="filterByRisk('EMERGENCY')">
+                                                <i class="fas fa-exclamation-triangle"></i> Emergency
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="filterByRisk('CRITICAL')">
+                                                <i class="fas fa-fire"></i> Critical
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm" onclick="filterByRisk('HIGH')">
+                                                <i class="fas fa-warning"></i> High
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info btn-sm" onclick="filterByRisk('MEDIUM')">
+                                                <i class="fas fa-info"></i> Medium
+                                            </button>
+                                            <button type="button" class="btn btn-outline-success btn-sm" onclick="filterByRisk('LOW')">
+                                                <i class="fas fa-check"></i> Low
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="filterByRisk('ALL')">
+                                                <i class="fas fa-list"></i> All
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="max-height: 600px; overflow-y: auto;">
+                                        <div id="activeIncidentsContainer">
+                                            <div class="text-center text-muted py-5">
+                                                <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                                                <p>No active incidents. System monitoring...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- All Incidents -->
+                            <div class="tab-pane fade" id="all" role="tabpanel">
+                                <div class="p-3">
+                                    <div style="max-height: 600px; overflow-y: auto;">
+                                        <div id="allIncidentsContainer">
+                                            <div class="text-center text-muted py-5">
+                                                <i class="fas fa-list fa-2x mb-3"></i>
+                                                <p>No incidents recorded yet...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resolved Incidents -->
+                            <div class="tab-pane fade" id="resolved" role="tabpanel">
+                                <div class="p-3">
+                                    <div style="max-height: 600px; overflow-y: auto;">
+                                        <div id="resolvedIncidentsContainer">
+                                            <div class="text-center text-muted py-5">
+                                                <i class="fas fa-check-circle fa-2x mb-3"></i>
+                                                <p>No resolved incidents yet...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volunteers Panel -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-users"></i> Volunteer Status</h6>
+                        <button class="btn btn-outline-primary btn-sm float-end" onclick="refreshVolunteers()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                        <div id="volunteersContainer">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-users fa-2x mb-3"></i>
+                                <p>Loading volunteers...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incident Detail Modal -->
+    <div class="modal fade" id="incidentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Incident Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="incidentModalContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" id="assignVolunteerBtn">
+                        <i class="fas fa-user-plus"></i> Assign Volunteer
+                    </button>
+                    <button type="button" class="btn btn-success" id="resolveIncidentBtn">
+                        <i class="fas fa-check"></i> Mark Resolved
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volunteer Assignment Modal -->
+    <div class="modal fade" id="volunteerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus"></i> Assign Volunteer
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="volunteerModalContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAssignBtn">
+                        <i class="fas fa-check"></i> Confirm Assignment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let incidents = [];
+        let volunteers = [];
+        let selectedIncident = null;
+
+        // Socket event handlers
+        socket.on('connect', function () {
+            updateConnectionStatus(true);
+        });
+
+        socket.on('disconnect', function () {
+            updateConnectionStatus(false);
+        });
+
+        socket.on('new_incident', function (incident) {
+            incidents.unshift(incident);
+            displayIncident(incident);
+            updateIncidentCounts();
+
+            // Show notification for high priority incidents
+            if (incident.priority === 'CRITICAL' || incident.priority === 'EMERGENCY') {
+                showEmergencyNotification(incident);
+            }
+        });
+
+        socket.on('status_update', function (status) {
+            updateSystemStatus(status);
+        });
+
+        socket.on('volunteer_assigned', function (data) {
+            updateVolunteerStatus(data.volunteer_id, 'assigned');
+            updateIncidentStatus(data.incident_id, 'assigned');
+        });
+
+        socket.on('incident_resolved', function (data) {
+            updateIncidentStatus(data.incident_id, 'resolved');
+        });
+
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+
+            if (connected) {
+                indicator.className = 'status-indicator status-new';
+                text.textContent = 'Connected';
+            } else {
+                indicator.className = 'status-indicator status-resolved';
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        function updateSystemStatus(status) {
+            document.getElementById('totalIncidents').textContent = status.total_incidents;
+            document.getElementById('activeIncidents').textContent = status.active_incidents;
+            document.getElementById('resolvedIncidents').textContent = status.resolved_incidents;
+            document.getElementById('availableVolunteers').textContent = status.volunteers_available;
+            document.getElementById('assignedVolunteers').textContent = status.volunteers_assigned;
+            document.getElementById('activeCount').textContent = status.active_incidents;
+
+            const lastUpdate = new Date(status.last_update).toLocaleTimeString();
+            document.getElementById('lastUpdate').textContent = lastUpdate;
+        }
+        function displayIncident(incident) {
+            const incidentCard = createIncidentCard(incident);
+
+            // Add to active incidents if not resolved
+            if (incident.status !== 'resolved') {
+                const activeContainer = document.getElementById('activeIncidentsContainer');
+                if (activeContainer.innerHTML.includes('No active incidents')) {
+                    activeContainer.innerHTML = '';
+                }
+                activeContainer.insertAdjacentHTML('afterbegin', incidentCard);
+            }
+
+            // Add to all incidents
+            const allContainer = document.getElementById('allIncidentsContainer');
+            if (allContainer.innerHTML.includes('No incidents recorded')) {
+                allContainer.innerHTML = '';
+            }
+            allContainer.insertAdjacentHTML('afterbegin', incidentCard);
+
+            // Add to resolved if resolved
+            if (incident.status === 'resolved') {
+                const resolvedContainer = document.getElementById('resolvedIncidentsContainer');
+                if (resolvedContainer.innerHTML.includes('No resolved incidents')) {
+                    resolvedContainer.innerHTML = '';
+                }
+                resolvedContainer.insertAdjacentHTML('afterbegin', incidentCard);
+            }
+        }
+
+        function createIncidentCard(incident) {
+            const priorityClass = `priority-${incident.priority.toLowerCase()}`;
+            const statusClass = `status-${incident.status}`;
+            const isEmergency = incident.priority === 'EMERGENCY';
+
+            // Use the integrated analysis summary data
+            const analysis = incident.analysis_summary || {};
+            const insights = incident.admin_insights || {};
+
+            return `
+                <div class="incident-card card ${priorityClass} ${isEmergency ? 'emergency-alert' : ''}" data-incident-id="${incident.id}" data-priority="${incident.priority}">
+                    <div class="card-body">
+                        <!-- Collapsible Header - Shows Key Info Only -->
+                        <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="toggleIncidentDetails('${incident.id}')">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <span class="status-indicator ${statusClass}"></span>
+                                    ${incident.category}
+                                    <span class="badge bg-${getPriorityColor(incident.priority)} ms-2">${incident.priority}</span>
+                                </h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> ${new Date(incident.timestamp).toLocaleString()}
+                                    | <i class="fas fa-map-marker-alt"></i> ${incident.location}
+                                    | <i class="fas fa-percentage"></i> ${incident.confidence}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <div class="badge bg-info mb-1">${incident.volunteer_requirements.urgency.toUpperCase()}</div>
+                                <div class="small text-muted">${incident.estimated_response_time}</div>
+                                <i class="fas fa-chevron-down" id="chevron-${incident.id}"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Key Information Summary (Always Visible) -->
+                        <div class="mb-2">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>⚠️ Risk Level:</strong> 
+                                    <span class="badge bg-${getPriorityColor(insights.risk_assessment?.risk_level || 'LOW')}">${insights.risk_assessment?.risk_level || 'Unknown'}</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>👥 Staff Needed:</strong> ${incident.volunteer_requirements.count} person(s)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p class="mb-2"><strong>📋 Situation:</strong> ${analysis.situation_overview || 'No description available'}</p>
+                                
+                                <div class="mb-2">
+                                    <strong>🔍 Critical Points:</strong>
+                                    ${(insights.critical_points || []).map(point =>
+                `<div class="concern-item">${point}</div>`
+            ).join('')}
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <strong>⚡ Immediate Actions:</strong>
+                                    <ul class="small mb-1">
+                                        ${(analysis.immediate_actions || []).slice(0, 3).map(action =>
+                `<li>${action}</li>`
+            ).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <strong>⚠️ Risk Assessment:</strong>
+                                    <div class="small">
+                                        Risk Level: <span class="badge bg-${getPriorityColor(insights.risk_assessment?.risk_level || 'LOW')}">${insights.risk_assessment?.risk_level || 'Unknown'}</span>
+                                        | Escalation: ${insights.risk_assessment?.escalation_potential || 'Unknown'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <strong>🛠️ Equipment Required:</strong>
+                                    ${(analysis.equipment_required || []).slice(0, 3).map(resource =>
+                `<div class="resource-item">${resource}</div>`
+            ).join('')}
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <strong>👥 Staff Requirements:</strong>
+                                    <div class="small">
+                                        <i class="fas fa-users"></i> ${incident.volunteer_requirements.count} person(s)<br>
+                                        <i class="fas fa-tags"></i> ${incident.volunteer_requirements.roles.join(', ')}<br>
+                                        <i class="fas fa-clock"></i> ${incident.estimated_response_time}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <strong>📊 Resource Plan:</strong>
+                                    <div class="small">
+                                        Personnel: ${insights.resource_allocation?.personnel_count || 1}<br>
+                                        Cost: ${insights.resource_allocation?.estimated_cost || 'Unknown'}<br>
+                                        Deploy: ${insights.resource_allocation?.deployment_time || 'Unknown'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 pt-2 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-secondary">ID: ${incident.id}</span>
+                                ${incident.assigned_volunteers && incident.assigned_volunteers.length > 0 ?
+                    `<span class="badge bg-warning ms-1">Assigned (${incident.assigned_volunteers.length})</span>` :
+                    `<span class="badge bg-danger ms-1">Unassigned</span>`
+                }
+                                <span class="badge bg-info ms-1">${analysis.severity_assessment || 'Assessment Pending'}</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary action-btn" onclick="viewIncidentDetails('${incident.id}')">
+                                    <i class="fas fa-eye"></i> Full Analysis
+                                </button>
+                                ${incident.status !== 'resolved' ? `
+                                    <button class="btn btn-warning action-btn" onclick="assignVolunteer('${incident.id}')">
+                                        <i class="fas fa-user-plus"></i> Assign
+                                    </button>
+                                    <button class="btn btn-success action-btn" onclick="resolveIncident('${incident.id}')">
+                                        <i class="fas fa-check"></i> Resolve
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createVolunteerCard(volunteer) {
+            const statusClass = `volunteer-${volunteer.status}`;
+            const statusIcon = getVolunteerStatusIcon(volunteer.status);
+            const statusColor = getVolunteerStatusColor(volunteer.status);
+
+            return `
+                <div class="volunteer-card card ${statusClass}" data-volunteer-id="${volunteer.id}">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${volunteer.name}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-id-badge"></i> ${volunteer.role}<br>
+                                    <i class="fas fa-map-marker-alt"></i> ${volunteer.location}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-${statusColor}">${statusIcon} ${volunteer.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <strong>Skills:</strong> ${volunteer.skills.join(', ')}
+                            </small>
+                        </div>
+                        
+                        ${volunteer.status === 'available' ? `
+                            <div class="mt-2">
+                                <button class="btn btn-primary btn-sm w-100" onclick="quickAssign(${volunteer.id})">
+                                    <i class="fas fa-bolt"></i> Quick Assign
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                'EMERGENCY': 'danger',
+                'CRITICAL': 'danger',
+                'HIGH': 'warning',
+                'MEDIUM': 'info',
+                'LOW': 'success'
+            };
+            return colors[priority] || 'secondary';
+        }
+
+        function getVolunteerStatusIcon(status) {
+            const icons = {
+                'available': '✅',
+                'assigned': '⚠️',
+                'busy': '🔴'
+            };
+            return icons[status] || '❓';
+        }
+
+        function getVolunteerStatusColor(status) {
+            const colors = {
+                'available': 'success',
+                'assigned': 'warning',
+                'busy': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        function viewIncidentDetails(incidentId) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (!incident) return;
+
+            selectedIncident = incident;
+
+            // Get integrated analysis data
+            const analysis = incident.analysis_summary || {};
+            const insights = incident.admin_insights || {};
+            const riskAssessment = insights.risk_assessment || {};
+            const resourcePlan = insights.resource_allocation || {};
+            const priorities = insights.response_priorities || [];
+            const escalationTriggers = insights.escalation_triggers || [];
+
+            const modalContent = `
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle"></i> Incident Information</h6>
+                        <table class="table table-sm">
+                            <tr><td><strong>ID:</strong></td><td>${incident.id}</td></tr>
+                            <tr><td><strong>Category:</strong></td><td>${incident.category}</td></tr>
+                            <tr><td><strong>Priority:</strong></td><td><span class="badge bg-${getPriorityColor(incident.priority)}">${incident.priority}</span></td></tr>
+                            <tr><td><strong>Status:</strong></td><td>${incident.status}</td></tr>
+                            <tr><td><strong>Location:</strong></td><td>${incident.location}</td></tr>
+                            <tr><td><strong>Confidence:</strong></td><td>${incident.confidence}</td></tr>
+                            <tr><td><strong>Response Time:</strong></td><td>${incident.estimated_response_time}</td></tr>
+                            <tr><td><strong>Created:</strong></td><td>${new Date(incident.timestamp).toLocaleString()}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-users"></i> Resource Requirements</h6>
+                        <p><strong>Staff Needed:</strong> ${incident.volunteer_requirements.count}</p>
+                        <p><strong>Roles:</strong> ${incident.volunteer_requirements.roles.join(', ')}</p>
+                        <p><strong>Skills:</strong> ${incident.volunteer_requirements.skills.join(', ')}</p>
+                        <p><strong>Urgency:</strong> <span class="badge bg-info">${incident.volunteer_requirements.urgency}</span></p>
+                        
+                        <h6 class="mt-3"><i class="fas fa-chart-line"></i> Resource Plan</h6>
+                        <p><strong>Personnel:</strong> ${resourcePlan.personnel_count || 1} person(s)</p>
+                        <p><strong>Estimated Cost:</strong> ${resourcePlan.estimated_cost || 'Unknown'}</p>
+                        <p><strong>Deployment Time:</strong> ${resourcePlan.deployment_time || 'Unknown'}</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6><i class="fas fa-clipboard-list"></i> Complete Analysis Summary</h6>
+                        
+                        <div class="alert alert-info">
+                            <h6>📋 Situation Overview</h6>
+                            <p>${analysis.situation_overview || 'No description available'}</p>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6>⚠️ Severity Assessment</h6>
+                            <p>${analysis.severity_assessment || 'Assessment pending'}</p>
+                        </div>
+                        
+                        <div class="alert alert-danger">
+                            <h6>🔍 Hazard Analysis</h6>
+                            <p>${analysis.hazard_analysis || 'Analysis pending'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-bolt"></i> Immediate Actions Required</h6>
+                        <ol class="list-group list-group-numbered">
+                            ${(analysis.immediate_actions || []).map(action =>
+                `<li class="list-group-item">${action}</li>`
+            ).join('')}
+                        </ol>
+                        
+                        <h6 class="mt-3"><i class="fas fa-tools"></i> Equipment Required</h6>
+                        <ul class="list-group">
+                            ${(analysis.equipment_required || []).map(equipment =>
+                `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${equipment}
+                                    <span class="badge bg-primary rounded-pill">Required</span>
+                                </li>`
+            ).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Risk Assessment</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Risk Level:</strong> <span class="badge bg-${getPriorityColor(riskAssessment.risk_level || 'LOW')}">${riskAssessment.risk_level || 'Unknown'}</span></p>
+                                <p><strong>Escalation Potential:</strong> ${riskAssessment.escalation_potential || 'Unknown'}</p>
+                                
+                                <h6>Risk Factors:</h6>
+                                <ul>
+                                    ${(riskAssessment.risk_factors || []).map(factor =>
+                `<li>${factor}</li>`
+            ).join('')}
+                                </ul>
+                                
+                                <h6>Mitigation Steps:</h6>
+                                <ul>
+                                    ${(riskAssessment.mitigation_steps || []).map(step =>
+                `<li>${step}</li>`
+            ).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-list-ol"></i> Response Priorities</h6>
+                        ${priorities.map(priority => `
+                            <div class="card mb-2">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary">Priority ${priority.priority}</span>
+                                        <span class="badge bg-${priority.urgency === 'CRITICAL' ? 'danger' : priority.urgency === 'HIGH' ? 'warning' : 'info'}">${priority.urgency}</span>
+                                    </div>
+                                    <p class="mb-1 mt-2"><strong>Action:</strong> ${priority.action}</p>
+                                    <p class="mb-0 small text-muted"><strong>Assigned to:</strong> ${priority.assigned_to}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-arrow-up"></i> Escalation Triggers</h6>
+                        <div class="alert alert-warning">
+                            <p class="mb-2"><strong>Escalate if any of the following occur:</strong></p>
+                            <ul class="mb-0">
+                                ${escalationTriggers.map(trigger =>
+                `<li>${trigger}</li>`
+            ).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-handshake"></i> De-escalation Strategy</h6>
+                        <div class="alert alert-success">
+                            <p>${analysis.de_escalation_strategy || 'No strategy provided'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-check-circle"></i> Resolution Method</h6>
+                        <div class="alert alert-info">
+                            <p>${analysis.resolution_method || 'No method provided'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                ${incident.assigned_volunteers && incident.assigned_volunteers.length > 0 ? `
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-user-check"></i> Assigned Volunteers</h6>
+                            <div class="d-flex flex-wrap">
+                                ${incident.assigned_volunteers.map(volId => {
+                const vol = volunteers.find(v => v.id === volId);
+                return vol ? `<span class="badge bg-success me-1 mb-1">${vol.name} (${vol.role})</span>` : '';
+            }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+                        <p><strong>Urgency:</strong> <span class="badge bg-info">${incident.volunteer_requirements.urgency}</span></p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6>Situation Analysis</h6>
+                <p><strong>Overview:</strong> ${incident.admin_summary.situation}</p>
+                
+                <h6>Key Concerns</h6>
+                ${incident.admin_summary.immediate_concerns.map(concern =>
+                `<div class="alert alert-warning py-2">${concern}</div>`
+            ).join('')}
+                
+                <h6>Recommended Actions</h6>
+                <ol>
+                    ${incident.admin_summary.recommended_actions.map(action =>
+                `<li>${action}</li>`
+            ).join('')}
+                </ol>
+                
+                <h6>Resolution Strategy</h6>
+                <p>${incident.admin_summary.resolution_strategy}</p>
+                
+                <h6>De-escalation Notes</h6>
+                <p>${incident.admin_summary.de_escalation_notes}</p>
+            `;
+
+            document.getElementById('incidentModalContent').innerHTML = modalContent;
+
+            // Update modal buttons
+            document.getElementById('assignVolunteerBtn').onclick = () => assignVolunteer(incidentId);
+            document.getElementById('resolveIncidentBtn').onclick = () => resolveIncident(incidentId);
+
+            new bootstrap.Modal(document.getElementById('incidentModal')).show();
+        }
+
+        function assignVolunteer(incidentId) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (!incident) return;
+
+            const availableVolunteers = volunteers.filter(v => v.status === 'available');
+            const suitableVolunteers = availableVolunteers.filter(v =>
+                incident.volunteer_requirements.roles.some(role => v.role === role) ||
+                incident.volunteer_requirements.skills.some(skill => v.skills.includes(skill))
+            );
+
+            const modalContent = `
+                <h6>Select Volunteer for Incident: ${incident.category}</h6>
+                <p><strong>Required:</strong> ${incident.volunteer_requirements.roles.join(', ')} | ${incident.volunteer_requirements.skills.join(', ')}</p>
+                
+                <div class="mb-3">
+                    <label class="form-label">Suitable Volunteers:</label>
+                    <select class="form-select" id="volunteerSelect">
+                        <option value="">Select a volunteer...</option>
+                        ${suitableVolunteers.map(v =>
+                `<option value="${v.id}">${v.name} (${v.role}) - ${v.location}</option>`
+            ).join('')}
+                    </select>
+                </div>
+                
+                ${availableVolunteers.length > suitableVolunteers.length ? `
+                    <div class="mb-3">
+                        <label class="form-label">Other Available Volunteers:</label>
+                        <select class="form-select" id="otherVolunteerSelect">
+                            <option value="">Select from other volunteers...</option>
+                            ${availableVolunteers.filter(v => !suitableVolunteers.includes(v)).map(v =>
+                `<option value="${v.id}">${v.name} (${v.role}) - ${v.location}</option>`
+            ).join('')}
+                        </select>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('volunteerModalContent').innerHTML = modalContent;
+            document.getElementById('confirmAssignBtn').onclick = () => confirmVolunteerAssignment(incidentId);
+
+            new bootstrap.Modal(document.getElementById('volunteerModal')).show();
+        }
+
+        function confirmVolunteerAssignment(incidentId) {
+            const volunteerSelect = document.getElementById('volunteerSelect');
+            const otherSelect = document.getElementById('otherVolunteerSelect');
+
+            const volunteerId = volunteerSelect?.value || otherSelect?.value;
+
+            if (!volunteerId) {
+                alert('Please select a volunteer');
+                return;
+            }
+
+            fetch('/api/assign-volunteer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    volunteer_id: parseInt(volunteerId),
+                    incident_id: incidentId
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        bootstrap.Modal.getInstance(document.getElementById('volunteerModal')).hide();
+                        showToast('Volunteer assigned successfully', 'success');
+                    } else {
+                        showToast('Failed to assign volunteer: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Error assigning volunteer: ' + error.message, 'error');
+                });
+        }
+
+        function resolveIncident(incidentId) {
+            if (confirm('Mark this incident as resolved?')) {
+                fetch('/api/resolve-incident', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ incident_id: incidentId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showToast('Incident marked as resolved', 'success');
+                            bootstrap.Modal.getInstance(document.getElementById('incidentModal'))?.hide();
+                        } else {
+                            showToast('Failed to resolve incident: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showToast('Error resolving incident: ' + error.message, 'error');
+                    });
+            }
+        }
+
+        function refreshVolunteers() {
+            fetch('/api/volunteers')
+                .then(response => response.json())
+                .then(data => {
+                    volunteers = data.volunteers;
+                    displayVolunteers();
+                })
+                .catch(error => {
+                    showToast('Failed to refresh volunteers: ' + error.message, 'error');
+                });
+        }
+
+        function displayVolunteers() {
+            const container = document.getElementById('volunteersContainer');
+
+            if (volunteers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-users fa-2x mb-3"></i>
+                        <p>No volunteers available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = volunteers.map(volunteer => createVolunteerCard(volunteer)).join('');
+        }
+
+        function updateIncidentCounts() {
+            const activeCount = incidents.filter(i => i.status !== 'resolved').length;
+            document.getElementById('activeCount').textContent = activeCount;
+        }
+
+        function updateVolunteerStatus(volunteerId, status) {
+            const volunteer = volunteers.find(v => v.id === volunteerId);
+            if (volunteer) {
+                volunteer.status = status;
+                displayVolunteers();
+            }
+        }
+
+        function updateIncidentStatus(incidentId, status) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (incident) {
+                incident.status = status;
+                // Refresh displays
+                refreshIncidents();
+            }
+        }
+
+        function refreshIncidents() {
+            fetch('/api/incidents')
+                .then(response => response.json())
+                .then(data => {
+                    incidents = data.incidents;
+                    displayAllIncidents();
+                })
+                .catch(error => {
+                    showToast('Failed to refresh incidents: ' + error.message, 'error');
+                });
+        }
+
+        function displayAllIncidents() {
+            const activeContainer = document.getElementById('activeIncidentsContainer');
+            const allContainer = document.getElementById('allIncidentsContainer');
+            const resolvedContainer = document.getElementById('resolvedIncidentsContainer');
+
+            // Clear containers
+            activeContainer.innerHTML = '';
+            allContainer.innerHTML = '';
+            resolvedContainer.innerHTML = '';
+
+            if (incidents.length === 0) {
+                activeContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-shield-alt fa-3x mb-3"></i><p>No active incidents. System monitoring...</p></div>`;
+                allContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-list fa-2x mb-3"></i><p>No incidents recorded yet...</p></div>`;
+                resolvedContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-check-circle fa-2x mb-3"></i><p>No resolved incidents yet...</p></div>`;
+                return;
+            }
+
+            incidents.forEach(incident => {
+                const card = createIncidentCard(incident);
+
+                // Add to all incidents
+                allContainer.insertAdjacentHTML('beforeend', card);
+
+                // Add to appropriate status container
+                if (incident.status === 'resolved') {
+                    resolvedContainer.insertAdjacentHTML('beforeend', card);
+                } else {
+                    activeContainer.insertAdjacentHTML('beforeend', card);
+                }
+            });
+        }
+
+        function showEmergencyNotification(incident) {
+            const notification = `
+                <div class="alert alert-danger alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999; min-width: 400px;">
+                    <h6><i class="fas fa-exclamation-triangle"></i> EMERGENCY INCIDENT</h6>
+                    <p><strong>${incident.category}</strong> at ${incident.location}</p>
+                    <p>${incident.admin_summary.situation}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', notification);
+
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    if (alert.innerHTML.includes('EMERGENCY INCIDENT')) {
+                        alert.remove();
+                    }
+                });
+            }, 10000);
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // New functions for enhanced admin panel features
+        
+        function toggleIncidentDetails(incidentId) {
+            const chevron = document.getElementById(`chevron-${incidentId}`);
+            const detailsDiv = document.getElementById(`details-${incidentId}`);
+            
+            if (detailsDiv) {
+                if (detailsDiv.style.display === 'none') {
+                    detailsDiv.style.display = 'block';
+                    chevron.className = 'fas fa-chevron-up';
+                } else {
+                    detailsDiv.style.display = 'none';
+                    chevron.className = 'fas fa-chevron-down';
+                }
+            }
+        }
+
+        function filterByRisk(riskLevel) {
+            // Update active button
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const incidentCards = document.querySelectorAll('.incident-card');
+            
+            incidentCards.forEach(card => {
+                if (riskLevel === 'ALL') {
+                    card.style.display = 'block';
+                } else {
+                    const cardPriority = card.getAttribute('data-priority');
+                    if (cardPriority === riskLevel) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function assignMultipleVolunteers(incidentId, volunteerIds) {
+            fetch('/api/assign-multiple-volunteers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    volunteer_ids: volunteerIds,
+                    incident_id: incidentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast(`${data.assigned_count} volunteers assigned successfully`, 'success');
+                    refreshVolunteers();
+                    refreshIncidents();
+                } else {
+                    showToast('Failed to assign volunteers: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Error assigning volunteers: ' + error.message, 'error');
+            });
+        }
+
+        // Auto-refresh volunteer status
+        socket.on('volunteer_status_updated', function(data) {
+            refreshVolunteers();
+        });
+
+        socket.on('volunteers_assigned', function(data) {
+            showToast(`${data.count} volunteers assigned to incident`, 'success');
+            refreshVolunteers();
+            refreshIncidents();
+        });
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshIncidents();
+            refreshVolunteers();
+
+            // Auto-refresh every 15 seconds for real-time updates
+            setInterval(() => {
+                refreshIncidents();
+                refreshVolunteers();
+                updateSystemStatus();
+            }, 15000);
+        });
+    </script>
+</body>
+
+</html>  
+                          </div>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <strong>Skills:</strong> ${volunteer.skills.join(', ')}
+                            </small>
+                        </div>
+                        
+                        ${volunteer.status === 'available' ? `
+                            <div class="mt-2">
+                                <button class="btn btn-primary btn-sm w-100" onclick="quickAssign(${volunteer.id})">
+                                    <i class="fas fa-bolt"></i> Quick Assign
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                'EMERGENCY': 'danger',
+                'CRITICAL': 'danger',
+                'HIGH': 'warning',
+                'MEDIUM': 'info',
+                'LOW': 'success'
+            };
+            return colors[priority] || 'secondary';
+        }
+
+        function getVolunteerStatusIcon(status) {
+            const icons = {
+                'available': '✅',
+                'assigned': '⚠️',
+                'busy': '🔴'
+            };
+            return icons[status] || '❓';
+        }
+
+        function getVolunteerStatusColor(status) {
+            const colors = {
+                'available': 'success',
+                'assigned': 'warning',
+                'busy': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        // Enhanced volunteer assignment modal with multiple selection
+        function assignVolunteer(incidentId) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (!incident) return;
+
+            const availableVolunteers = volunteers.filter(v => v.status === 'available');
+            const suitableVolunteers = availableVolunteers.filter(v => 
+                incident.volunteer_requirements.roles.some(role => v.role === role) ||
+                incident.volunteer_requirements.skills.some(skill => v.skills.includes(skill))
+            );
+
+            const modalContent = `
+                <h6>Assign Volunteers to: ${incident.category}</h6>
+                <p><strong>Required:</strong> ${incident.volunteer_requirements.roles.join(', ')} | ${incident.volunteer_requirements.skills.join(', ')}</p>
+                
+                <div class="mb-3">
+                    <label class="form-label">Select Multiple Volunteers:</label>
+                    <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
+                        ${availableVolunteers.map(v => `
+                            <div class="form-check">
+                                <input class="form-check-input volunteer-checkbox" type="checkbox" value="${v.id}" id="vol-${v.id}">
+                                <label class="form-check-label" for="vol-${v.id}">
+                                    <strong>${v.name}</strong> (${v.role}) - ${v.location}
+                                    <br><small class="text-muted">Skills: ${v.skills.join(', ')}</small>
+                                    ${suitableVolunteers.includes(v) ? '<span class="badge bg-success ms-1">Suitable</span>' : ''}
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <strong>Recommended:</strong> ${incident.volunteer_requirements.count} volunteer(s) needed
+                </div>
+            `;
+
+            document.getElementById('volunteerModalContent').innerHTML = modalContent;
+            document.getElementById('confirmAssignBtn').onclick = () => confirmMultipleVolunteerAssignment(incidentId);
+
+            new bootstrap.Modal(document.getElementById('volunteerModal')).show();
+        }
+
+        function confirmMultipleVolunteerAssignment(incidentId) {
+            const selectedVolunteers = Array.from(document.querySelectorAll('.volunteer-checkbox:checked'))
+                .map(checkbox => parseInt(checkbox.value));
+
+            if (selectedVolunteers.length === 0) {
+                showToast('Please select at least one volunteer', 'error');
+                return;
+            }
+
+            assignMultipleVolunteers(incidentId, selectedVolunteers);
+            bootstrap.Modal.getInstance(document.getElementById('volunteerModal')).hide();
+        }
+
+        // Enhanced incident details modal showing original analysis
+        function viewIncidentDetails(incidentId) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (!incident) return;
+
+            selectedIncident = incident;
+
+            // Get original analysis data
+            const analysis = incident.analysis_summary || {};
+            const insights = incident.admin_insights || {};
+            const rawAnalysis = incident.raw_analysis || {};
+
+            const modalContent = `
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle"></i> Incident Information</h6>
+                        <table class="table table-sm">
+                            <tr><td><strong>ID:</strong></td><td>${incident.id}</td></tr>
+                            <tr><td><strong>Category:</strong></td><td>${incident.category}</td></tr>
+                            <tr><td><strong>Priority:</strong></td><td><span class="badge bg-${getPriorityColor(incident.priority)}">${incident.priority}</span></td></tr>
+                            <tr><td><strong>Status:</strong></td><td>${incident.status}</td></tr>
+                            <tr><td><strong>Location:</strong></td><td>${incident.location}</td></tr>
+                            <tr><td><strong>Confidence:</strong></td><td>${incident.confidence}</td></tr>
+                            <tr><td><strong>Response Time:</strong></td><td>${incident.estimated_response_time}</td></tr>
+                            <tr><td><strong>Created:</strong></td><td>${new Date(incident.timestamp).toLocaleString()}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-users"></i> Volunteer Assignment</h6>
+                        <p><strong>Required:</strong> ${incident.volunteer_requirements.count} person(s)</p>
+                        <p><strong>Roles:</strong> ${incident.volunteer_requirements.roles.join(', ')}</p>
+                        <p><strong>Skills:</strong> ${incident.volunteer_requirements.skills.join(', ')}</p>
+                        <p><strong>Urgency:</strong> <span class="badge bg-info">${incident.volunteer_requirements.urgency}</span></p>
+                        
+                        ${incident.assigned_volunteers && incident.assigned_volunteers.length > 0 ? `
+                            <h6 class="mt-3">Assigned Volunteers</h6>
+                            <div class="d-flex flex-wrap">
+                                ${incident.assigned_volunteers.map(volId => {
+                                    const vol = volunteers.find(v => v.id === volId);
+                                    return vol ? `<span class="badge bg-success me-1 mb-1">${vol.name} (${vol.role})</span>` : '';
+                                }).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6><i class="fas fa-robot"></i> Original Gemini Analysis Summary</h6>
+                        
+                        <div class="alert alert-primary">
+                            <h6>📋 Situation Overview</h6>
+                            <p>${analysis.situation_overview || rawAnalysis.summary?.situation_overview || 'No description available'}</p>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h6>⚠️ Severity Assessment</h6>
+                            <p>${analysis.severity_assessment || rawAnalysis.summary?.severity_assessment || 'Assessment pending'}</p>
+                        </div>
+                        
+                        <div class="alert alert-danger">
+                            <h6>🔍 Hazard Analysis</h6>
+                            <p>${analysis.hazard_analysis || rawAnalysis.summary?.hazard_analysis || 'Analysis pending'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-bolt"></i> Immediate Actions Required</h6>
+                        <ol class="list-group list-group-numbered">
+                            ${(analysis.immediate_actions || rawAnalysis.summary?.immediate_actions || []).map(action => 
+                                `<li class="list-group-item">${action}</li>`
+                            ).join('')}
+                        </ol>
+                        
+                        <h6 class="mt-3"><i class="fas fa-tools"></i> Equipment Required</h6>
+                        <ul class="list-group">
+                            ${(analysis.equipment_required || rawAnalysis.summary?.equipment_required || []).map(equipment => 
+                                `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${equipment}
+                                    <span class="badge bg-primary rounded-pill">Required</span>
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-handshake"></i> De-escalation Strategy</h6>
+                        <div class="alert alert-success">
+                            <p>${analysis.de_escalation_strategy || rawAnalysis.summary?.de_escalation_strategy || 'No strategy provided'}</p>
+                        </div>
+                        
+                        <h6><i class="fas fa-check-circle"></i> Resolution Method</h6>
+                        <div class="alert alert-info">
+                            <p>${analysis.resolution_method || rawAnalysis.summary?.resolution_method || 'No method provided'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('incidentModalContent').innerHTML = modalContent;
+
+            // Update modal buttons
+            document.getElementById('assignVolunteerBtn').onclick = () => {
+                bootstrap.Modal.getInstance(document.getElementById('incidentModal')).hide();
+                assignVolunteer(incidentId);
+            };
+            document.getElementById('resolveIncidentBtn').onclick = () => resolveIncident(incidentId);
+
+            new bootstrap.Modal(document.getElementById('incidentModal')).show();
+        }
+
+        async function resolveIncident(incidentId) {
+            if (confirm('Mark this incident as resolved? This will free up assigned volunteers.')) {
+                try {
+                    const response = await fetch(`/api/resolve-incident`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ incident_id: incidentId })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        showToast(result.message, 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('incidentModal'))?.hide();
+                        refreshIncidents();
+                        refreshVolunteers();
+                    } else {
+                        showToast('Failed to resolve incident: ' + result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error resolving incident: ' + error.message, 'error');
+                }
+            }
+        }
+
+        async function refreshVolunteers() {
+            try {
+                const response = await fetch('/api/volunteers');
+                const data = await response.json();
+                volunteers = data.volunteers;
+                displayVolunteers();
+            } catch (error) {
+                showToast('Failed to refresh volunteers: ' + error.message, 'error');
+            }
+        }
+
+        function displayVolunteers() {
+            const container = document.getElementById('volunteersContainer');
+            
+            if (volunteers.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-users fa-2x mb-3"></i>
+                        <p>No volunteers available</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = volunteers.map(volunteer => createVolunteerCard(volunteer)).join('');
+        }
+
+        function updateIncidentCounts() {
+            const activeCount = incidents.filter(i => i.status !== 'resolved').length;
+            document.getElementById('activeCount').textContent = activeCount;
+        }
+
+        function updateVolunteerStatus(volunteerId, status) {
+            const volunteer = volunteers.find(v => v.id === volunteerId);
+            if (volunteer) {
+                volunteer.status = status;
+                displayVolunteers();
+            }
+        }
+
+        function updateIncidentStatus(incidentId, status) {
+            const incident = incidents.find(i => i.id === incidentId);
+            if (incident) {
+                incident.status = status;
+                refreshIncidents();
+            }
+        }
+
+        async function refreshIncidents() {
+            try {
+                const response = await fetch('/api/incidents');
+                const data = await response.json();
+                incidents = data.incidents;
+                displayAllIncidents();
+            } catch (error) {
+                showToast('Failed to refresh incidents: ' + error.message, 'error');
+            }
+        }
+
+        function displayAllIncidents() {
+            const activeContainer = document.getElementById('activeIncidentsContainer');
+            const allContainer = document.getElementById('allIncidentsContainer');
+            const resolvedContainer = document.getElementById('resolvedIncidentsContainer');
+            
+            // Clear containers
+            activeContainer.innerHTML = '';
+            allContainer.innerHTML = '';
+            resolvedContainer.innerHTML = '';
+            
+            if (incidents.length === 0) {
+                activeContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-shield-alt fa-3x mb-3"></i><p>No active incidents. System monitoring...</p></div>`;
+                allContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-list fa-2x mb-3"></i><p>No incidents recorded yet...</p></div>`;
+                resolvedContainer.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-check-circle fa-2x mb-3"></i><p>No resolved incidents yet...</p></div>`;
+                return;
+            }
+            
+            incidents.forEach(incident => {
+                const card = createIncidentCard(incident);
+                
+                // Add to all incidents
+                allContainer.insertAdjacentHTML('beforeend', card);
+                
+                // Add to appropriate status container
+                if (incident.status === 'resolved') {
+                    resolvedContainer.insertAdjacentHTML('beforeend', card);
+                } else {
+                    activeContainer.insertAdjacentHTML('beforeend', card);
+                }
+            });
+        }
+
+        function showEmergencyNotification(incident) {
+            const notification = `
+                <div class="alert alert-danger alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999; min-width: 400px;">
+                    <h6><i class="fas fa-exclamation-triangle"></i> EMERGENCY INCIDENT</h6>
+                    <p><strong>${incident.category}</strong> at ${incident.location}</p>
+                    <p>${incident.analysis_summary?.situation_overview || 'Emergency situation detected'}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', notification);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    if (alert.innerHTML.includes('EMERGENCY INCIDENT')) {
+                        alert.remove();
+                    }
+                });
+            }, 10000);
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        async function loadInitialData() {
+            await Promise.all([
+                refreshIncidents(),
+                refreshVolunteers(),
+                updateSystemStatus()
+            ]);
+        }
+
+        async function updateSystemStatus() {
+            try {
+                const response = await fetch('/api/system-status');
+                const data = await response.json();
+                updateSystemStatus(data);
+            } catch (error) {
+                console.error('Failed to update system status:', error);
+            }
+        }
+
+        // New functions for enhanced admin panel features
+        
+        function toggleIncidentDetails(incidentId) {
+            const chevron = document.getElementById(`chevron-${incidentId}`);
+            const detailsDiv = document.getElementById(`details-${incidentId}`);
+            
+            if (detailsDiv) {
+                if (detailsDiv.style.display === 'none') {
+                    detailsDiv.style.display = 'block';
+                    chevron.className = 'fas fa-chevron-up';
+                } else {
+                    detailsDiv.style.display = 'none';
+                    chevron.className = 'fas fa-chevron-down';
+                }
+            }
+        }
+
+        function filterByRisk(riskLevel) {
+            // Update active button
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const incidentCards = document.querySelectorAll('.incident-card');
+            
+            incidentCards.forEach(card => {
+                if (riskLevel === 'ALL') {
+                    card.style.display = 'block';
+                } else {
+                    const cardPriority = card.getAttribute('data-priority');
+                    if (cardPriority === riskLevel) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function assignMultipleVolunteers(incidentId, volunteerIds) {
+            fetch('/api/assign-multiple-volunteers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    volunteer_ids: volunteerIds,
+                    incident_id: incidentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast(`${data.assigned_count} volunteers assigned successfully`, 'success');
+                    refreshVolunteers();
+                    refreshIncidents();
+                } else {
+                    showToast('Failed to assign volunteers: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Error assigning volunteers: ' + error.message, 'error');
+            });
+        }
+
+        // Auto-refresh volunteer status
+        socket.on('volunteer_status_updated', function(data) {
+            refreshVolunteers();
+        });
+
+        socket.on('volunteers_assigned', function(data) {
+            showToast(`${data.count} volunteers assigned to incident`, 'success');
+            refreshVolunteers();
+            refreshIncidents();
+        });
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshIncidents();
+            refreshVolunteers();
+
+            // Auto-refresh every 15 seconds for real-time updates
+            setInterval(() => {
+                refreshIncidents();
+                refreshVolunteers();
+                updateSystemStatus();
+            }, 15000);
+        });
+    </script>
+</body>
+</html>

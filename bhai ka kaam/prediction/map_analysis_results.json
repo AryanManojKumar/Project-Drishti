@@ -1,0 +1,90 @@
+{
+  "timestamp": "2025-07-23 07:19:10",
+  "analysis_type": "complete_map_video_analysis",
+  "map_analysis": {
+    "density_zones": [
+      "Entrance Plaza near Entry Gates",
+      "Food Court and Plaza",
+      "Amphitheater during events",
+      "Registration area"
+    ],
+    "density_rating": 6,
+    "entry_exit_points": [
+      "Entry Gates (multiple locations)",
+      "Exit Gates (multiple locations)",
+      "Hall entrances (H1A, H1B, H2A, etc.)",
+      "Parking area"
+    ],
+    "bottlenecks": [
+      "Entry and Exit Gates",
+      "Narrow pathways between buildings",
+      "Food Court entrance during peak hours",
+      "Registration area"
+    ],
+    "flow_paths": [
+      "Main pathways connecting Entry Gates to Halls",
+      "Pathways leading to the Amphitheater",
+      "Routes to Food Court and Plaza"
+    ],
+    "emergency_routes": [
+      "Main pathways leading to Exit Gates",
+      "Open spaces around the Lagoon",
+      "Parking areas (potentially for evacuation)",
+      "Access roads to First Aid and Ambulance"
+    ],
+    "high_risk_areas": [
+      "Entry/Exit Gates during arrival and departure",
+      "Food Court during lunch/dinner",
+      "Amphitheater during peak event times",
+      "Areas with limited visibility and narrow pathways"
+    ],
+    "safety_score": 7,
+    "monitoring_priorities": [
+      "Entry Gates",
+      "Food Court/Plaza",
+      "Amphitheater",
+      "Narrow Pathways"
+    ],
+    "venue_type": "Large outdoor venue including conference halls, food areas, amphitheater, and outdoor spaces.",
+    "capacity_estimate": "5000-10000 (depending on the size of the amphitheater and event)",
+    "recommendations": [
+      "Implement crowd control measures at entry/exit points (barriers, signage, staff).",
+      "Increase the number of staff at the food court and registration area.",
+      "Develop a clear evacuation plan with clearly marked routes.",
+      "Ensure adequate lighting in all areas, especially pathways.",
+      "Monitor crowd density in real-time using cameras and/or sensors.",
+      "Consider staggered entry/exit times to reduce congestion.",
+      "Provide clear and visible signage throughout the venue.",
+      "Ensure access for emergency vehicles is always maintained.",
+      "Train staff on crowd management and emergency procedures.",
+      "Consider the use of queue management systems at the food court and registration area."
+    ],
+    "analysis_source": "gemini_comprehensive",
+    "image_analyzed": true
+  },
+  "video_analysis": {
+    "error": "Cannot open video source"
+  },
+  "realtime_data": {},
+  "combined_insights": {
+    "overall_crowd_level": "HIGH",
+    "risk_assessment": "medium",
+    "confidence_score": 0.33,
+    "key_findings": [
+      "Map density rating: 6/10"
+    ],
+    "data_sources_used": [
+      "map_analysis"
+    ]
+  },
+  "recommendations": [
+    "\u26a0\ufe0f HIGH ALERT - Enhanced monitoring needed",
+    "Increase security presence in identified hotspots",
+    "Implement crowd flow management",
+    "Prepare for potential crowd control measures",
+    "\ud83c\udfaf Monitor bottleneck: Entry and Exit Gates",
+    "\ud83c\udfaf Monitor bottleneck: Narrow pathways between buildings",
+    "\ud83c\udfaf Monitor bottleneck: Food Court entrance during peak hours"
+  ],
+  "alert_level": "warning"
+}

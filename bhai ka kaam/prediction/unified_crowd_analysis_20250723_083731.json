@@ -1,0 +1,229 @@
+{
+  "analysis_timestamp": "2025-07-23T08:37:21.012151",
+  "analysis_type": "unified_complete",
+  "input_sources": [
+    "map_analysis",
+    "video_analysis",
+    "maps_crowd_data"
+  ],
+  "individual_analyses": {
+    "map_analysis": {
+      "timestamp": "2025-07-23 08:37:21",
+      "analysis_type": "complete_map_video_analysis",
+      "map_analysis": {
+        "density_zones": [
+          "Food Plaza",
+          "Amphitheater",
+          "Hall entrances (H1A, H1B, H2A, etc.)",
+          "Registration Area"
+        ],
+        "density_rating": 6,
+        "entry_exit_points": [
+          "Entry Gates (various locations)",
+          "Exit Gates (various locations)",
+          "Parking area entrances/exits"
+        ],
+        "bottlenecks": [
+          "Hall entrances during peak event times",
+          "Narrow pathways around the lagoon",
+          "Registration Area",
+          "Food Plaza during lunch/dinner hours"
+        ],
+        "flow_paths": [
+          "Main pathways connecting entry gates to halls",
+          "Pathways leading to/from the parking area",
+          "Paths between halls, the amphitheater, and the food plaza"
+        ],
+        "emergency_routes": [
+          "Main pathways leading away from halls and amphitheater",
+          "Paths to exit gates and parking area"
+        ],
+        "high_risk_areas": [
+          "Amphitheater during large performances",
+          "Food Plaza during peak hours (potential for slips and falls)",
+          "Hall entrances during event start/end times (potential for crush)",
+          "Registration area due to concentrated activity"
+        ],
+        "safety_score": 7,
+        "monitoring_priorities": [
+          "Amphitheater during events",
+          "Food Plaza during lunch/dinner",
+          "Hall entrances before/after events",
+          "Registration area"
+        ],
+        "venue_type": "Conference/Event venue with multiple halls, outdoor spaces (amphitheater, lagoon), and food areas.",
+        "capacity_estimate": "Difficult to estimate without dimensions, but likely several thousand people across all areas.",
+        "recommendations": [
+          "Implement crowd control measures at hall entrances (e.g., stanchions, roped-off areas).",
+          "Ensure adequate signage for emergency exits and routes.",
+          "Deploy security personnel or event staff at high-density zones (food plaza, amphitheater).",
+          "Provide sufficient waste receptacles to prevent litter and tripping hazards, especially in the food plaza.",
+          "Consider staggered event schedules to reduce congestion at hall entrances.",
+          "Monitor weather conditions and implement appropriate safety measures for outdoor areas.",
+          "Clearly mark and maintain accessible routes for people with disabilities.",
+          "Set capacity for all the Halls and monitor them so that in case of emergency situation everyone can get to safety"
+        ],
+        "analysis_source": "gemini_comprehensive",
+        "image_analyzed": true
+      },
+      "video_analysis": {
+        "error": "Cannot open video source"
+      },
+      "realtime_data": {
+        "places_analysis": {
+          "total_places": 0,
+          "high_rated": 0,
+          "popular_places": 0,
+          "place_types": []
+        },
+        "traffic_analysis": {
+          "traffic_level": "moderate",
+          "congestion_score": 6,
+          "peak_hours": [
+            "08:00-10:00",
+            "17:00-19:00"
+          ]
+        },
+        "location_crowd_score": 30
+      },
+      "combined_insights": {
+        "overall_crowd_level": "MEDIUM",
+        "risk_assessment": "low",
+        "confidence_score": 0.66,
+        "key_findings": [
+          "Map density rating: 6/10",
+          "Location crowd score: 30/100"
+        ],
+        "data_sources_used": [
+          "map_analysis",
+          "realtime_data"
+        ]
+      },
+      "recommendations": [
+        "\ud83d\udcca MODERATE - Continue active monitoring",
+        "Maintain standard security protocols",
+        "Monitor identified bottlenecks closely",
+        "\ud83c\udfaf Monitor bottleneck: Hall entrances during peak event times",
+        "\ud83c\udfaf Monitor bottleneck: Narrow pathways around the lagoon",
+        "\ud83c\udfaf Monitor bottleneck: Registration Area"
+      ],
+      "alert_level": "caution"
+    },
+    "video_analysis": {
+      "crowd_level": "LOW",
+      "people_count": 0,
+      "density_score": 0.0,
+      "alert_status": "normal",
+      "timestamp": "2025-07-23 08:37:31",
+      "video_analysis": {
+        "people_count": 0,
+        "error": "Gemini API failed"
+      },
+      "maps_analysis": {
+        "crowd_factor": 0.0,
+        "nearby_places": 0,
+        "busy_places": 0,
+        "source": "google_maps"
+      }
+    },
+    "maps_crowd_data": {
+      "timestamp": "2025-07-23T08:37:31.114134",
+      "location": {
+        "lat": 28.6139,
+        "lng": 77.209
+      },
+      "total_estimated_people": 0,
+      "crowd_zones": {
+        "high_density_zones": [],
+        "medium_density_zones": [],
+        "low_density_zones": []
+      },
+      "density_hotspots": [],
+      "places_data": {
+        "total_places": 0,
+        "high_crowd_places": [],
+        "medium_crowd_places": [],
+        "low_crowd_places": []
+      }
+    }
+  },
+  "unified_metrics": {
+    "total_people_estimate": 0,
+    "crowd_density_score": 60.0,
+    "safety_risk_score": 30.0,
+    "flow_efficiency_score": 70,
+    "venue_capacity_utilization": 0,
+    "alert_level": "warning",
+    "critical_factors": [],
+    "data_confidence": 0.99
+  },
+  "combined_insights": {
+    "crowd_situation_summary": "HIGH ALERT: 0 people with elevated density (60.0%). Enhanced monitoring needed.",
+    "key_findings": [
+      "Video Analysis: 0 people counted in real-time",
+      "Map Analysis: 4 high-risk areas identified",
+      "Bottlenecks: 4 potential choke points found"
+    ],
+    "risk_assessment": {
+      "overall_risk_level": "Low",
+      "risk_score": 30.0,
+      "primary_risk_factors": [],
+      "mitigation_priority": "Medium"
+    },
+    "capacity_analysis": {
+      "current_utilization": "0.0%",
+      "capacity_status": "Low",
+      "estimated_people": 0,
+      "capacity_recommendation": "Normal operations"
+    },
+    "flow_analysis": {
+      "flow_efficiency": "70.0%",
+      "flow_status": "Good",
+      "flow_recommendation": "Monitor flow patterns"
+    },
+    "location_hotspots": [],
+    "temporal_factors": {
+      "current_time": "08:37",
+      "time_factor": "Peak Hours",
+      "crowd_expectation": "Higher than normal"
+    }
+  },
+  "final_assessment": {
+    "overall_status": "WARNING - High crowd density with elevated safety risks",
+    "severity_level": 7,
+    "immediate_actions_required": [
+      "Increase security personnel by 100%",
+      "Implement enhanced crowd monitoring",
+      "Prepare crowd control barriers",
+      "Brief staff on emergency procedures"
+    ],
+    "short_term_recommendations": [
+      "Continue monitoring every 15 minutes",
+      "Update crowd analysis every 30 minutes",
+      "Maintain communication with security team"
+    ],
+    "long_term_suggestions": [
+      "Review venue capacity limits",
+      "Analyze crowd patterns for future events",
+      "Consider infrastructure improvements for better flow"
+    ],
+    "success_metrics": {
+      "target_density_reduction": "10.0%",
+      "target_people_reduction": 0,
+      "safety_improvement_target": "0.0 points",
+      "monitoring_frequency": "15 minutes"
+    },
+    "next_review_time": "15 minutes"
+  },
+  "actionable_recommendations": [
+    "\ud83d\udea8 IMMEDIATE: Increase security personnel by 100%",
+    "\ud83d\udea8 IMMEDIATE: Implement enhanced crowd monitoring",
+    "\ud83d\udea8 IMMEDIATE: Prepare crowd control barriers",
+    "\ud83d\udea8 IMMEDIATE: Brief staff on emergency procedures",
+    "\u23f0 SHORT-TERM: Continue monitoring every 15 minutes",
+    "\u23f0 SHORT-TERM: Update crowd analysis every 30 minutes",
+    "\u23f0 SHORT-TERM: Maintain communication with security team"
+  ],
+  "density_overlay_path": "density_overlay_1753240051.png",
+  "confidence_score": 1.0
+}

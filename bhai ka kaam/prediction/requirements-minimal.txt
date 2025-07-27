@@ -1,0 +1,8 @@
+# Minimal requirements for testing
+numpy==1.24.3
+geohash2==1.1
+python-dotenv==1.0.0
+
+# Optional GCP libraries (comment out if causing issues)
+# google-cloud-pubsub==2.18.4
+# google-cloud-firestore==2.13.1

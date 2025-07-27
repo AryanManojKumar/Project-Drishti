@@ -1,0 +1,17 @@
+UNIFIED CROWD ANALYSIS SUMMARY
+==================================================
+
+Analysis Time: 2025-07-23T08:48:14.514471
+Data Sources: map_analysis, video_analysis, maps_crowd_data
+Confidence Score: 1.00
+
+FINAL ASSESSMENT:
+Status: NORMAL - Standard crowd conditions with routine monitoring
+Severity: 3/10
+
+UNIFIED METRICS:
+Total People Estimate: 0
+Crowd Density Score: 0.0%
+Alert Level: NORMAL
+
+TOP RECOMMENDATIONS:

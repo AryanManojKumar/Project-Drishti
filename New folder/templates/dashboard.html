@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Video Anomaly Detection Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .anomaly-card {
+            border-left: 5px solid;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .anomaly-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .severity-low { border-left-color: #28a745; }
+        .severity-medium { border-left-color: #ffc107; }
+        .severity-high { border-left-color: #fd7e14; }
+        .severity-critical { border-left-color: #dc3545; }
+        .severity-emergency { border-left-color: #6f42c1; }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-active { background-color: #28a745; animation: pulse 2s infinite; }
+        .status-inactive { background-color: #dc3545; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .alert-emergency {
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+            color: white;
+            animation: flash 1s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 50% { opacity: 1; }
+            25%, 75% { opacity: 0.7; }
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-video"></i> Live Video Anomaly Detection System
+            </span>
+            <div class="d-flex align-items-center">
+                <a href="http://localhost:5001" target="_blank" class="btn btn-warning btn-sm me-3">
+                    <i class="fas fa-shield-alt"></i> Admin Dashboard
+                </a>
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="statusText">Disconnected</span>
+                <button class="btn btn-success ms-3" id="startBtn" onclick="startMonitoring()">
+                    <i class="fas fa-play"></i> Start Live Camera
+                </button>
+                <button class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                    <i class="fas fa-upload"></i> Upload MP4
+                </button>
+                <button class="btn btn-danger ms-2" id="stopBtn" onclick="stopMonitoring()" disabled>
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Statistics Panel -->
+            <div class="col-md-3">
+                <div class="card stats-card mb-4">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line"></i> Statistics
+                        </h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <h3 id="totalAnomalies">0</h3>
+                                <small>Total Anomalies</small>
+                            </div>
+                            <div class="col-6">
+                                <h3 id="highPriority">0</h3>
+                                <small>High Priority</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-tags"></i> Categories</h6>
+                    </div>
+                    <div class="card-body" id="categoriesPanel">
+                        <p class="text-muted">No data available</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Panel with Tabs -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="mainTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts" type="button" role="tab">
+                                    <i class="fas fa-exclamation-triangle"></i> Anomaly Alerts
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
+                                    <i class="fas fa-terminal"></i> Analysis Logs
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="tab-content" id="mainTabContent">
+                            <!-- Alerts Tab -->
+                            <div class="tab-pane fade show active" id="alerts" role="tabpanel">
+                                <div class="p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0">Live Anomaly Alerts</h6>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="refreshAlerts()">
+                                            <i class="fas fa-sync-alt"></i> Refresh
+                                        </button>
+                                    </div>
+                                    <div style="max-height: 550px; overflow-y: auto;">
+                                        <div id="alertsContainer">
+                                            <div class="text-center text-muted py-5">
+                                                <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                                                <p>No anomalies detected. System monitoring...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Logs Tab -->
+                            <div class="tab-pane fade" id="logs" role="tabpanel">
+                                <div class="p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0">Real-time Analysis Logs</h6>
+                                        <div>
+                                            <button class="btn btn-outline-secondary btn-sm me-2" onclick="clearLogs()">
+                                                <i class="fas fa-trash"></i> Clear
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="refreshLogs()">
+                                                <i class="fas fa-sync-alt"></i> Refresh
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="logsContainer" style="max-height: 550px; overflow-y: auto; background-color: #1e1e1e; color: #ffffff; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                                        <div class="text-center text-muted py-5">
+                                            <i class="fas fa-terminal fa-2x mb-3"></i>
+                                            <p>Analysis logs will appear here when monitoring starts...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-upload"></i> Upload Video File
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="videoFile" class="form-label">Select Video File</label>
+                            <input type="file" class="form-control" id="videoFile" name="video" 
+                                   accept=".mp4,.avi,.mov,.mkv,.wmv,.flv" required>
+                            <div class="form-text">
+                                Supported formats: MP4, AVI, MOV, MKV, WMV, FLV (Max: 500MB)
+                            </div>
+                        </div>
+                        <div class="progress mb-3" id="uploadProgress" style="display: none;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadVideo()">
+                        <i class="fas fa-upload"></i> Upload & Start Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Alert Modal -->
+    <div class="modal fade" id="emergencyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> EMERGENCY ALERT
+                    </h5>
+                </div>
+                <div class="modal-body" id="emergencyContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Acknowledge</button>
+                    <button type="button" class="btn btn-danger">Dispatch Emergency Response</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let isMonitoring = false;
+
+        // Socket event handlers
+        socket.on('connect', function() {
+            updateStatus(true);
+        });
+
+        socket.on('disconnect', function() {
+            updateStatus(false);
+        });
+
+        socket.on('anomaly_alert', function(data) {
+            displayAnomalyAlert(data);
+            updateStatistics();
+            
+            // Show emergency modal for critical alerts
+            if (data.severity.level >= 4) {
+                showEmergencyModal(data);
+            }
+        });
+
+        function updateStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (connected) {
+                indicator.className = 'status-indicator status-active';
+                text.textContent = isMonitoring ? 'Monitoring Active' : 'Connected';
+            } else {
+                indicator.className = 'status-indicator status-inactive';
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        async function startMonitoring() {
+            try {
+                const response = await fetch('/api/start-monitoring', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    isMonitoring = true;
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    updateStatus(true);
+                    showToast('Monitoring started successfully', 'success');
+                }
+            } catch (error) {
+                showToast('Failed to start monitoring: ' + error.message, 'error');
+            }
+        }
+
+        async function stopMonitoring() {
+            try {
+                const response = await fetch('/api/stop-monitoring', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    isMonitoring = false;
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                    updateStatus(true);
+                    showToast('Monitoring stopped', 'info');
+                }
+            } catch (error) {
+                showToast('Failed to stop monitoring: ' + error.message, 'error');
+            }
+        }   
+     function displayAnomalyAlert(alert) {
+            const container = document.getElementById('alertsContainer');
+            
+            // Clear "no anomalies" message if present
+            if (container.innerHTML.includes('No anomalies detected')) {
+                container.innerHTML = '';
+            }
+            
+            const alertCard = createAnomalyCard(alert);
+            container.insertAdjacentHTML('afterbegin', alertCard);
+            
+            // Limit to 20 most recent alerts
+            const cards = container.querySelectorAll('.anomaly-card');
+            if (cards.length > 20) {
+                cards[cards.length - 1].remove();
+            }
+        }
+
+        function createAnomalyCard(alert) {
+            const severityClass = `severity-${alert.severity.label.toLowerCase()}`;
+            const alertClass = alert.severity.level >= 4 ? 'alert-emergency' : '';
+            
+            return `
+                <div class="anomaly-card card ${severityClass} ${alertClass}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                ${alert.category}
+                            </h6>
+                            <div class="text-end">
+                                <span class="badge" style="background-color: ${alert.severity.color}">
+                                    ${alert.severity.label} (${alert.severity.level}/5)
+                                </span>
+                                <small class="d-block text-muted">${new Date(alert.timestamp).toLocaleTimeString()}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Location:</strong> ${alert.location}</p>
+                                <p class="mb-2"><strong>Confidence:</strong> ${alert.confidence}</p>
+                                <p class="mb-3"><strong>Situation:</strong> ${alert.summary.situation_overview}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong>Hazard Analysis:</strong></p>
+                                <p class="small mb-3">${alert.summary.hazard_analysis}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>Immediate Actions:</strong></p>
+                                <ul class="small mb-2">
+                                    ${alert.summary.immediate_actions.map(action => `<li>${action}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>Equipment Required:</strong></p>
+                                <ul class="small mb-2">
+                                    ${alert.summary.equipment_required.map(eq => `<li>${eq}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>De-escalation:</strong></p>
+                                <p class="small mb-2">${alert.summary.de_escalation_strategy}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-2 pt-2 border-top">
+                            <p class="mb-0"><strong>Resolution Method:</strong></p>
+                            <p class="small mb-0">${alert.summary.resolution_method}</p>
+                        </div>
+                        
+                        ${alert.requires_immediate_action ? 
+                            '<div class="alert alert-warning mt-2 mb-0"><i class="fas fa-bolt"></i> Requires immediate action!</div>' : 
+                            ''
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function showEmergencyModal(alert) {
+            const modal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+            const content = document.getElementById('emergencyContent');
+            
+            content.innerHTML = `
+                <div class="alert alert-danger">
+                    <h5><i class="fas fa-exclamation-triangle"></i> ${alert.category}</h5>
+                    <p><strong>Location:</strong> ${alert.location}</p>
+                    <p><strong>Severity:</strong> ${alert.severity.label} (${alert.severity.level}/5)</p>
+                    <p><strong>Confidence:</strong> ${alert.confidence}</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Situation Overview</h6>
+                        <p>${alert.summary.situation_overview}</p>
+                        
+                        <h6>Hazard Analysis</h6>
+                        <p>${alert.summary.hazard_analysis}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Immediate Actions Required</h6>
+                        <ul>
+                            ${alert.summary.immediate_actions.map(action => `<li>${action}</li>`).join('')}
+                        </ul>
+                        
+                        <h6>Equipment Needed</h6>
+                        <ul>
+                            ${alert.summary.equipment_required.map(eq => `<li>${eq}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>Resolution Strategy</h6>
+                    <p>${alert.summary.resolution_method}</p>
+                </div>
+            `;
+            
+            modal.show();
+        }
+
+        async function refreshAlerts() {
+            try {
+                const response = await fetch('/api/anomalies');
+                const data = await response.json();
+                
+                const container = document.getElementById('alertsContainer');
+                container.innerHTML = '';
+                
+                if (data.all_reports && data.all_reports.length > 0) {
+                    data.all_reports.forEach(alert => {
+                        const alertCard = createAnomalyCard(alert);
+                        container.insertAdjacentHTML('beforeend', alertCard);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                            <p>No anomalies detected. System monitoring...</p>
+                        </div>
+                    `;
+                }
+                
+                updateStatistics();
+            } catch (error) {
+                showToast('Failed to refresh alerts: ' + error.message, 'error');
+            }
+        }
+
+        async function updateStatistics() {
+            try {
+                const response = await fetch('/api/statistics');
+                const stats = await response.json();
+                
+                document.getElementById('totalAnomalies').textContent = stats.total_anomalies || 0;
+                document.getElementById('highPriority').textContent = stats.high_priority_count || 0;
+                
+                const categoriesPanel = document.getElementById('categoriesPanel');
+                if (stats.categories && Object.keys(stats.categories).length > 0) {
+                    categoriesPanel.innerHTML = Object.entries(stats.categories)
+                        .map(([category, count]) => `
+                            <div class="d-flex justify-content-between">
+                                <span class="small">${category.replace('_', ' ')}</span>
+                                <span class="badge bg-secondary">${count}</span>
+                            </div>
+                        `).join('');
+                } else {
+                    categoriesPanel.innerHTML = '<p class="text-muted">No data available</p>';
+                }
+            } catch (error) {
+                console.error('Failed to update statistics:', error);
+            }
+        }
+
+        function showToast(message, type) {
+            // Simple toast notification
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'error' ? 'danger' : type} position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        async function uploadVideo() {
+            const fileInput = document.getElementById('videoFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Please select a video file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('video', file);
+            
+            const progressBar = document.getElementById('uploadProgress');
+            const progressBarInner = progressBar.querySelector('.progress-bar');
+            
+            try {
+                progressBar.style.display = 'block';
+                progressBarInner.style.width = '0%';
+                
+                const response = await fetch('/api/upload-video', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    isMonitoring = true;
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    updateStatus(true);
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                    modal.hide();
+                    
+                    // Reset form
+                    document.getElementById('uploadForm').reset();
+                    progressBar.style.display = 'none';
+                    
+                    showToast(`Video uploaded successfully: ${result.filename}`, 'success');
+                } else {
+                    showToast('Upload failed: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Upload error: ' + error.message, 'error');
+            } finally {
+                progressBar.style.display = 'none';
+            }
+        }
+
+        // Logs functionality
+        socket.on('analysis_log', function(logData) {
+            displayAnalysisLog(logData);
+        });
+
+        function displayAnalysisLog(logData) {
+            const container = document.getElementById('logsContainer');
+            
+            // Clear "no logs" message if present
+            if (container.innerHTML.includes('Analysis logs will appear here')) {
+                container.innerHTML = '';
+            }
+            
+            const logEntry = createLogEntry(logData);
+            container.insertAdjacentHTML('afterbegin', logEntry);
+            
+            // Limit to 100 most recent log entries
+            const logs = container.querySelectorAll('.log-entry');
+            if (logs.length > 100) {
+                logs[logs.length - 1].remove();
+            }
+            
+            // Auto-scroll to top for new logs
+            container.scrollTop = 0;
+        }
+
+        function createLogEntry(logData) {
+            const timestamp = new Date(logData.timestamp).toLocaleTimeString();
+            const statusIcon = logData.anomaly_detected ? '🚨' : '✅';
+            const statusColor = logData.anomaly_detected ? '#ff6b6b' : '#51cf66';
+            
+            let logContent = `
+                <div class="log-entry mb-3 p-2" style="border-left: 3px solid ${statusColor}; background-color: #2d2d2d;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span style="color: #4dabf7;">[${timestamp}] ${statusIcon} FRAME ANALYSIS</span>
+                        <span style="color: #868e96; font-size: 11px;">Duration: ${logData.analysis_duration}s</span>
+                    </div>
+                    <div style="color: #ced4da; font-size: 11px; margin-left: 10px;">
+                        📐 Frame: ${logData.frame_size} | 🎯 Model: ${logData.model_used}
+                    </div>
+            `;
+            
+            if (logData.scene_description) {
+                logContent += `
+                    <div style="color: #ffd43b; margin: 8px 0 8px 10px; font-size: 11px;">
+                        🔍 Scene Analysis: ${logData.scene_description}
+                    </div>
+                `;
+            }
+            
+            if (logData.anomaly_detected) {
+                logContent += `
+                    <div style="color: #ff6b6b; margin: 8px 0 8px 10px;">
+                        <strong>⚠️ ANOMALY DETECTED</strong><br>
+                        <span style="font-size: 11px;">
+                            📍 Category: ${logData.category}<br>
+                            🎯 Confidence: ${logData.confidence}%<br>
+                            📊 Severity: ${logData.severity_level}/5 (${logData.severity_label})<br>
+                            📍 Location: ${logData.location}
+                        </span>
+                    </div>
+                `;
+            } else {
+                logContent += `
+                    <div style="color: #51cf66; margin: 8px 0 8px 10px; font-size: 11px;">
+                        ✅ No anomalies detected - Scene appears normal
+                    </div>
+                `;
+            }
+            
+            if (logData.error) {
+                logContent += `
+                    <div style="color: #ff8787; margin: 8px 0 8px 10px; font-size: 11px;">
+                        ❌ Error: ${logData.error}
+                    </div>
+                `;
+            }
+            
+            logContent += `
+                    <div style="color: #868e96; font-size: 10px; margin-top: 8px; margin-left: 10px;">
+                        📈 Total anomalies detected: ${logData.total_anomalies}
+                    </div>
+                </div>
+            `;
+            
+            return logContent;
+        }
+
+        async function refreshLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const data = await response.json();
+                
+                const container = document.getElementById('logsContainer');
+                container.innerHTML = '';
+                
+                if (data.logs && data.logs.length > 0) {
+                    data.logs.forEach(log => {
+                        const logEntry = createLogEntry(log);
+                        container.insertAdjacentHTML('beforeend', logEntry);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-terminal fa-2x mb-3"></i>
+                            <p>Analysis logs will appear here when monitoring starts...</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                showToast('Failed to refresh logs: ' + error.message, 'error');
+            }
+        }
+
+        function clearLogs() {
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-terminal fa-2x mb-3"></i>
+                    <p>Logs cleared. New analysis logs will appear here...</p>
+                </div>
+            `;
+            
+            // Clear logs on server side
+            fetch('/api/clear-logs', { method: 'POST' })
+                .then(() => showToast('Logs cleared successfully', 'info'))
+                .catch(error => console.error('Failed to clear logs:', error));
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshAlerts();
+            updateStatistics();
+            refreshLogs();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                if (isMonitoring) {
+                    refreshAlerts();
+                    refreshLogs();
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
