@@ -63,25 +63,26 @@ pip install -r requirements.txt
 
 2. **Configure API key:**
 ```bash
-# Copy template and add your API key
-cp .env.template .env
 # Edit .env file with your Gemini API key
+# Set GEMINI_API_KEY=your_actual_api_key
 ```
 
 3. **Test the system:**
 ```bash
-python example_usage.py
+python main.py
 ```
 
 ## 🎯 Usage
 
 ### Command Line Interface
 ```bash
-# Basic usage with default camera
-python example_usage.py
+# Start the integrated system (recommended)
+python main.py
 
-# Or directly use the detector
-python video_anomaly_detector.py
+# Or start specific components
+python main.py --web             # Web interface only
+python main.py --camera          # Camera monitoring only
+python main.py --video video.mp4 # Analyze video file
 ```
 
 ### Web Dashboard
@@ -111,7 +112,7 @@ print(f"Total anomalies: {stats['total_anomalies']}")
 
 ### Environment Variables (.env)
 ```bash
-GEMINI_API_KEY=your_api_key_here
+GEMINI_API_KEY=your_actual_gemini_api_key
 GEMINI_MODEL=gemini-2.0-flash-exp
 ANALYSIS_INTERVAL=3              # Seconds between analyses
 FRAME_QUALITY=85                 # JPEG quality (1-100)

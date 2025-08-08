@@ -1,7 +1,7 @@
 {
   "latest_alert": {
-    "id": "anomaly_1753595813",
-    "timestamp": "2025-07-27T11:26:53.998161",
+    "id": "anomaly_1754671002",
+    "timestamp": "2025-08-08T22:06:42.449487",
     "category": "Crowd Control",
     "severity": {
       "level": 3,
@@ -11,33 +11,64 @@
     "confidence": "85.0%",
     "location": "center area",
     "summary": {
-      "situation_overview": "Large crowd appears tightly packed with limited personal space. High density can lead to discomfort, potential for pushing and shoving, and increased risk of trampling in case of sudden movement or panic.",
-      "severity_assessment": "Severity 3 due to high density and limited egress points visible. This can quickly escalate into a dangerous situation if there is an incident that causes panic. While there isn't evidence of distress, the conditions are ripe for rapid escalation.",
-      "hazard_analysis": "Risk of overcrowding leading to difficulty breathing, crushing injuries, or a stampede. Limited mobility could hinder emergency response.",
+      "situation_overview": "Extremely dense crowd at a concert. Limited visible space between individuals.",
+      "severity_assessment": "High density increases the risk of trampling, suffocation, and inability for emergency services to access individuals needing help. Panic could cause a stampede.",
+      "hazard_analysis": "Potential for crush injuries, heatstroke, dehydration, and difficulty in evacuating during an emergency. Medical emergencies will be difficult to reach and respond to.",
       "immediate_actions": [
-        "Monitor crowd density and movement",
-        "Deploy additional security personnel to observe crowd behavior and intervene if necessary",
-        "Prepare for potential medical emergencies",
-        "Ensure clear communication channels are open",
-        "Identify and mark clear evacuation routes",
-        "Adjust event sound level to prevent over-stimulation"
+        "Deploy crowd control personnel",
+        "Monitor crowd density in real time",
+        "Open up additional exits if available",
+        "Broadcast safety announcements"
       ],
       "equipment_required": [
-        "Barriers",
-        "Communication devices",
+        "Barricades",
+        "Radios",
         "First aid kits",
-        "Lighting to highlight exits"
+        "Water stations"
       ],
-      "de_escalation_strategy": "Gradually disperse the crowd through staggered exits, clear communication and instructions from event staff, and managing the tempo of event performances",
-      "resolution_method": "Employ methods to ease pressure. Can include opening exitways. Pause music for clearer communication if necessary."
+      "de_escalation_strategy": "Increase space by directing people away from the center. Monitor for signs of panic and address them immediately.",
+      "resolution_method": "Communicate with the crowd to encourage movement and prevent bottlenecks. Ensure adequate staffing and resources are available for medical and security response."
     },
     "alert_level": "warning",
     "requires_immediate_action": true
   },
   "all_reports": [
     {
-      "id": "anomaly_1753595813",
-      "timestamp": "2025-07-27T11:26:53.998161",
+      "id": "anomaly_1754671002",
+      "timestamp": "2025-08-08T22:06:41.627841",
+      "category": "Fire Hazard",
+      "severity": {
+        "level": 4,
+        "label": "CRITICAL",
+        "color": "#dc3545"
+      },
+      "confidence": "95.0%",
+      "location": "Stage area",
+      "summary": {
+        "situation_overview": "Large flames are present on the stage during the event. This presents a significant fire hazard to performers and the audience.",
+        "severity_assessment": "The flames are large and could quickly spread, causing burns, smoke inhalation, and panic.",
+        "hazard_analysis": "The flames could ignite nearby materials, cause structural damage, and trigger a stampede.",
+        "immediate_actions": [
+          "Activate fire suppression systems",
+          "Alert fire department",
+          "Initiate evacuation procedures",
+          "Secure the stage area"
+        ],
+        "equipment_required": [
+          "Fire extinguishers",
+          "Fire hoses",
+          "Evacuation alarms",
+          "Crowd control barriers"
+        ],
+        "de_escalation_strategy": "Immediately suppress the fire and manage crowd movement to prevent panic.",
+        "resolution_method": "Extinguish the fire using appropriate methods and provide medical assistance to any injured individuals. Coordinate a safe and orderly evacuation of the venue."
+      },
+      "alert_level": "danger",
+      "requires_immediate_action": true
+    },
+    {
+      "id": "anomaly_1754671002",
+      "timestamp": "2025-08-08T22:06:42.449487",
       "category": "Crowd Control",
       "severity": {
         "level": 3,
@@ -47,25 +78,23 @@
       "confidence": "85.0%",
       "location": "center area",
       "summary": {
-        "situation_overview": "Large crowd appears tightly packed with limited personal space. High density can lead to discomfort, potential for pushing and shoving, and increased risk of trampling in case of sudden movement or panic.",
-        "severity_assessment": "Severity 3 due to high density and limited egress points visible. This can quickly escalate into a dangerous situation if there is an incident that causes panic. While there isn't evidence of distress, the conditions are ripe for rapid escalation.",
-        "hazard_analysis": "Risk of overcrowding leading to difficulty breathing, crushing injuries, or a stampede. Limited mobility could hinder emergency response.",
+        "situation_overview": "Extremely dense crowd at a concert. Limited visible space between individuals.",
+        "severity_assessment": "High density increases the risk of trampling, suffocation, and inability for emergency services to access individuals needing help. Panic could cause a stampede.",
+        "hazard_analysis": "Potential for crush injuries, heatstroke, dehydration, and difficulty in evacuating during an emergency. Medical emergencies will be difficult to reach and respond to.",
         "immediate_actions": [
-          "Monitor crowd density and movement",
-          "Deploy additional security personnel to observe crowd behavior and intervene if necessary",
-          "Prepare for potential medical emergencies",
-          "Ensure clear communication channels are open",
-          "Identify and mark clear evacuation routes",
-          "Adjust event sound level to prevent over-stimulation"
+          "Deploy crowd control personnel",
+          "Monitor crowd density in real time",
+          "Open up additional exits if available",
+          "Broadcast safety announcements"
         ],
         "equipment_required": [
-          "Barriers",
-          "Communication devices",
+          "Barricades",
+          "Radios",
           "First aid kits",
-          "Lighting to highlight exits"
+          "Water stations"
         ],
-        "de_escalation_strategy": "Gradually disperse the crowd through staggered exits, clear communication and instructions from event staff, and managing the tempo of event performances",
-        "resolution_method": "Employ methods to ease pressure. Can include opening exitways. Pause music for clearer communication if necessary."
+        "de_escalation_strategy": "Increase space by directing people away from the center. Monitor for signs of panic and address them immediately.",
+        "resolution_method": "Communicate with the crowd to encourage movement and prevent bottlenecks. Ensure adequate staffing and resources are available for medical and security response."
       },
       "alert_level": "warning",
       "requires_immediate_action": true

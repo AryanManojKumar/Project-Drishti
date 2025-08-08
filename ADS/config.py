@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     # Gemini API Configuration
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyDq4jVjvz76mpWE2_8qTuMRRfEToyGryK8')
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'your_api_key_here')
     GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash')
     
     # Video Analysis Settings

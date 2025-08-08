@@ -7,9 +7,7 @@ from typing import Dict, List, Optional, Tuple
 import google.generativeai as genai
 from dataclasses import dataclass
 from enum import Enum
-import asyncio
 import threading
-from queue import Queue
 
 class AnomalyCategory(Enum):
     CROWD_CONTROL = "crowd_control"
@@ -52,7 +50,7 @@ class VideoAnomalyDetector:
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_name)
         self.model_name = model_name
-        self.frame_queue = Queue(maxsize=10)
+
         self.anomaly_reports = []
         self.is_monitoring = False
         self.last_analysis_time = 0
@@ -469,25 +467,3 @@ class VideoAnomalyDetector:
             "latest_anomaly": self.anomaly_reports[-1].timestamp if self.anomaly_reports else None
         }
 
-# Example usage and testing
-if __name__ == "__main__":
-    # Initialize detector with Gemini 2.0 Flash API key
-    API_KEY = "AIzaSyDq4jVjvz76mpWE2_8qTuMRRfEToyGryK8"
-    detector = VideoAnomalyDetector(API_KEY, "gemini-2.0-flash")
-    
-    try:
-        # Start live monitoring (0 for webcam, or path to video file)
-        detector.start_live_monitoring(0)
-        
-    except KeyboardInterrupt:
-        print("\n🛑 Monitoring interrupted by user")
-    except Exception as e:
-        print(f"❌ Error: {e}")
-    finally:
-        # Print final statistics
-        stats = detector.get_statistics()
-        print(f"\n📊 Final Statistics:")
-        print(f"Total anomalies detected: {stats['total_anomalies']}")
-        if stats['total_anomalies'] > 0:
-            print(f"High priority incidents: {stats['high_priority_count']}")
-            print(f"Categories: {stats['categories']}")

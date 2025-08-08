@@ -8,7 +8,7 @@ Usage:
     python main.py --web             # Start web interface
     python main.py --camera          # Start camera monitoring
     python main.py --video <path>    # Analyze video file
-    python main.py --test            # Run test suite
+
 """
 
 import os
@@ -177,20 +177,7 @@ class VideoAnomalySystem:
         finally:
             self.print_final_stats()
     
-    def run_test_suite(self):
-        """Run the test suite"""
-        print("🧪 Running Video Anomaly Detection Test Suite...")
-        print("=" * 60)
-        
-        # Import and run test system
-        try:
-            import test_system
-            test_system.main()
-        except ImportError:
-            print("❌ Test system not found!")
-            print("   Make sure test_system.py exists in the current directory")
-        except Exception as e:
-            print(f"❌ Test suite failed: {e}")
+
     
     def print_final_stats(self):
         """Print final statistics"""
@@ -346,12 +333,11 @@ class VideoAnomalySystem:
             print("3. 🌐 Start Video Analysis Only")
             print("4. 📹 Live Camera Monitoring")
             print("5. 🎬 Analyze Video File")
-            print("6. 🧪 Run Test Suite")
-            print("7. ⚙️  Show Configuration")
-            print("8. 📖 Show Help")
-            print("9. 🚪 Exit")
+            print("6. ⚙️  Show Configuration")
+            print("7. 📖 Show Help")
+            print("8. �  Exit")
             
-            choice = input("\nEnter your choice (1-9): ").strip()
+            choice = input("\nEnter your choice (1-8): ").strip()
             
             if choice == '1':
                 self.start_integrated_system()
@@ -378,16 +364,14 @@ class VideoAnomalySystem:
                     print("❌ No file path provided")
                 break
             elif choice == '6':
-                self.run_test_suite()
-            elif choice == '7':
                 self.show_configuration()
-            elif choice == '8':
+            elif choice == '7':
                 self.show_help()
-            elif choice == '9':
+            elif choice == '8':
                 print("👋 Goodbye!")
                 break
             else:
-                print("❌ Invalid choice. Please enter 1-9.")
+                print("❌ Invalid choice. Please enter 1-8.")
     
     def show_configuration(self):
         """Show current configuration"""
@@ -464,7 +448,7 @@ Examples:
   python main.py --camera          # Start camera monitoring
   python main.py --camera 1        # Use external camera
   python main.py --video video.mp4 # Analyze video file
-  python main.py --test            # Run test suite
+
         """
     )
     
@@ -474,8 +458,7 @@ Examples:
                        help='Start camera monitoring (optional camera index)')
     parser.add_argument('--video', type=str, metavar='PATH',
                        help='Analyze video file')
-    parser.add_argument('--test', action='store_true',
-                       help='Run test suite')
+
     parser.add_argument('--no-browser', action='store_true',
                        help='Don\'t auto-open browser for web interface')
     
@@ -497,8 +480,7 @@ Examples:
             system.start_camera_monitoring(args.camera)
         elif args.video:
             system.analyze_video_file(args.video)
-        elif args.test:
-            system.run_test_suite()
+
         else:
             # Start integrated system by default (admin panel + video analysis)
             print("🚀 Starting integrated system by default...")
